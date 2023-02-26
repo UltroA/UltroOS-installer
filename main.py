@@ -10,18 +10,13 @@ class Installer:
         self.harddrive = ''
 
     def diskwork(self):
-        # Select a harddrive and a disk password
         os.system("lsblk")
         diskn = input('Enter disk name in format: "sdX or nvmeXnY" (where X and Y is nums): ')
         self.harddrive = archinstall.select_disk(archinstall.select_disk(diskn))
 
-        # We disable safety precautions in the library that protects the partitions
         self.harddrive.keep_partitions = False
 
-        # First, we configure the basic filesystem layout
         with archinstall.Filesystem(self.harddrive, archinstall.GPT) as fs:
-            # We create a filesystem layout that will use the entire drive
-            # (this is a helper function, you can partition manually as well)
             fs.use_entire_disk(root_filesystem_type='btrfs')
 
             self.boot = fs.find_partition('/boot')
@@ -38,8 +33,6 @@ class Installer:
 
                 installation.add_additional_packages(['vim', 'wget', 'git'])
 
-                # Optionally, install a profile of choice.
-                # In this case, we install a minimal profile that is empty
                 installation.install_profile('gnome')
 
                 user = User('devel', 'devel', False)
